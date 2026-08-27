@@ -2,9 +2,6 @@
 Pre-train GPT from scratch on a small text corpus (the_verdict.txt).
 """
 
-import os
-import urllib.request
-
 import torch
 import tiktoken
 import matplotlib.pyplot as plt
@@ -15,16 +12,10 @@ from dataset import create_dataloader
 from generate import generate, text_to_ids, ids_to_text
 
 
-DATA_URL = (
-    "https://raw.githubusercontent.com/rasbt/LLMs-from-scratch"
-    "/main/ch02/01_main-chapter-code/the-verdict.txt"
-)
-DATA_FILE = "the_verdict.txt"
+DATA_FILE = "data_verdict.txt"
 
 
-def download_data():
-    if not os.path.exists(DATA_FILE):
-        urllib.request.urlretrieve(DATA_URL, DATA_FILE)
+def load_data():
     with open(DATA_FILE, "r", encoding="utf-8") as f:
         return f.read()
 
@@ -32,7 +23,7 @@ def download_data():
 def train(cfg, epochs=50, batch_size=2, lr=1e-4):
     device    = "cuda" if torch.cuda.is_available() else "cpu"
     tokenizer = tiktoken.get_encoding("gpt2")
-    text      = download_data()
+    text      = load_data()
 
     split       = int(0.9 * len(text))
     train_text  = text[:split]
