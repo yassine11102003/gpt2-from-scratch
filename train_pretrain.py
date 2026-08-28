@@ -44,8 +44,7 @@ def train(cfg, epochs=10, batch_size=2, lr=1e-4):
     sample_prompt = "Hello, I am"
 
     for epoch in range(epochs):
-        # --- training ---
-        print('hi')
+        # training
         model.train()
         epoch_loss, n = 0.0, 0
         for inputs, targets in train_loader:
@@ -59,8 +58,7 @@ def train(cfg, epochs=10, batch_size=2, lr=1e-4):
             n += 1
         train_losses.append(epoch_loss / n)
 
-        # --- validation ---
-        print('eval')
+        # validation
         model.eval()
         val_loss, n = 0.0, 0
         with torch.no_grad():

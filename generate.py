@@ -48,10 +48,7 @@ def ids_to_text(ids: torch.Tensor, tokenizer) -> str:
     return tokenizer.decode(ids.squeeze(0).tolist())
 
 
-# ---------------------------------------------------------------------------
 # Quick demo
-# ---------------------------------------------------------------------------
-
 if __name__ == "__main__":
     from model import GPTModel
     from config import GPT_TRAIN_CONFIG

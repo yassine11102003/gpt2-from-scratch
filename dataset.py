@@ -3,10 +3,7 @@ import tiktoken
 from torch.utils.data import Dataset, DataLoader
 
 
-# ---------------------------------------------------------------------------
 # Pre-training dataset
-# ---------------------------------------------------------------------------
-
 class GPTDataset(Dataset):
     """Sliding-window dataset for next-token prediction."""
 
@@ -32,10 +29,7 @@ def create_dataloader(txt, batch_size=8, max_length=4, stride=4,
                       drop_last=drop_last, num_workers=num_workers)
 
 
-# ---------------------------------------------------------------------------
 # Spam classification dataset
-# ---------------------------------------------------------------------------
-
 class SpamDataset(Dataset):
     """Binary spam/ham classification dataset."""
 
@@ -61,10 +55,7 @@ class SpamDataset(Dataset):
         return self.inputs[idx], self.targets[idx]
 
 
-# ---------------------------------------------------------------------------
 # Instruction fine-tuning dataset
-# ---------------------------------------------------------------------------
-
 def format_instruction(entry: dict) -> str:
     """Format a data entry as an instruction prompt."""
     prompt = (
