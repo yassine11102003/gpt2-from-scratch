@@ -6,7 +6,6 @@ Only the head, the final LayerNorm, and the last transformer block
 are trained; all other weights are frozen.
 """
 
-import os
 import zipfile
 import requests
 from pathlib import Path
@@ -19,8 +18,7 @@ import pandas as pd
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 
-from config import GPT_BASE_CONFIG, GPT_MODEL_CONFIGS
-from model import GPTModel
+from load_gpt2 import load_gpt2
 from dataset import SpamDataset
 
 
@@ -74,15 +72,8 @@ def train(model_name="gpt2-medium (355M)", epochs=5, lr=1e-4, batch_size=8):
     device    = "cuda" if torch.cuda.is_available() else "cpu"
     tokenizer = tiktoken.get_encoding("gpt2")
 
-    # Build config and load pre-trained weights
-    cfg = {**GPT_BASE_CONFIG, **GPT_MODEL_CONFIGS[model_name]}
-    model = GPTModel(cfg)
-
-    weights_file = f"{model_name.split()[0]}.pth"
-    if os.path.exists(weights_file):
-        model.load_state_dict(torch.load(weights_file, weights_only=True))
-    else:
-        print(f"Warning: {weights_file} not found. Using random weights.")
+    # Load pre-trained weights (downloads them if missing)
+    model, cfg = load_gpt2(model_name, device=device)
 
     # Freeze all parameters
     for p in model.parameters():
@@ -156,4 +147,4 @@ def train(model_name="gpt2-medium (355M)", epochs=5, lr=1e-4, batch_size=8):
 
 
 if __name__ == "__main__":
-    train()
+    train(model_name="gpt2-small (124M)", epochs=5)

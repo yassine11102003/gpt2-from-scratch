@@ -20,7 +20,7 @@ def load_data():
         return f.read()
 
 
-def train(cfg, epochs=50, batch_size=2, lr=1e-4):
+def train(cfg, epochs=10, batch_size=2, lr=1e-4):
     device    = "cuda" if torch.cuda.is_available() else "cpu"
     tokenizer = tiktoken.get_encoding("gpt2")
     text      = load_data()
@@ -45,6 +45,7 @@ def train(cfg, epochs=50, batch_size=2, lr=1e-4):
 
     for epoch in range(epochs):
         # --- training ---
+        print('hi')
         model.train()
         epoch_loss, n = 0.0, 0
         for inputs, targets in train_loader:
@@ -59,6 +60,7 @@ def train(cfg, epochs=50, batch_size=2, lr=1e-4):
         train_losses.append(epoch_loss / n)
 
         # --- validation ---
+        print('eval')
         model.eval()
         val_loss, n = 0.0, 0
         with torch.no_grad():
