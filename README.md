@@ -92,8 +92,6 @@ Below is an instruction that describes a task...
 ### Response:
 <réponse attendue>
 ```
-La loss est calculée uniquement sur les tokens de la réponse (les tokens de padding sont ignorés avec `ignore_index=-100`).
-
 ### 8. Chargement des poids GPT-2 (`load_gpt2.py`)
 Télécharge les poids officiels GPT-2 depuis HuggingFace et les charge dans `GPTModel`.
 
@@ -120,7 +118,7 @@ uv pip install -r requirements.txt
 python train_pretrain.py
 ```
 
-Télécharge automatiquement `the_verdict.txt`, entraîne le modèle pendant 50 epochs et sauvegarde `pretrained_model.pth`.
+Lit le texte local `data_verdict.txt`, entraîne le modèle pendant 10 epochs et sauvegarde `pretrained_model.pth`.
 
 ---
 

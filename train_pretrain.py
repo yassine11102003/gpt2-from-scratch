@@ -1,5 +1,5 @@
 """
-Pre-train GPT from scratch on a small text corpus (the_verdict.txt).
+Pre-train GPT from scratch on a small text corpus (data_verdict.txt).
 """
 
 import torch
