@@ -17,6 +17,7 @@ llm-from-scratch/
 ├── train_pretrain.py    # Entraînement from scratch
 ├── train_spam.py        # Fine-tuning classification spam/ham
 ├── train_instruct.py    # Fine-tuning par instructions
+├── infer_instruct.py    # Inférence avec le modèle instruction-tuned
 ├── load_gpt2.py         # Chargement des vrais poids GPT-2
 └── requirements.txt     # Dépendances
 ```
@@ -62,11 +63,12 @@ Tokens  →  Embedding (token + position)
 
 ### 4. Génération de texte (`generate.py`)
 ```python
-generate(model, idx, max_new_tokens, context_size, temperature, top_k)
+generate(model, idx, max_new_tokens, context_size, temperature, top_k, eos_id)
 ```
 - **Greedy** (`temperature=None`) : prend toujours le token le plus probable.
 - **Temperature** : divise les logits avant le softmax. Plus élevée = plus aléatoire.
 - **Top-k** : ne garde que les `k` tokens les plus probables avant d'échantillonner.
+- **eos_id** : arrête la génération dès que ce token est produit (ex. `<|endoftext|>`).
 
 ### 5. Pré-entraînement (`train_pretrain.py`)
 Entraîne le modèle à prédire le prochain token sur un texte brut (*The Verdict* de Henry James).
@@ -94,6 +96,9 @@ Below is an instruction that describes a task...
 ```
 ### 8. Chargement des poids GPT-2 (`load_gpt2.py`)
 Télécharge les poids officiels GPT-2 depuis HuggingFace et les charge dans `GPTModel`.
+
+### 9. Inférence sur le modèle instruction-tuned (`infer_instruct.py`)
+Charge `instruct_model.pth` (produit par `train_instruct.py`) et expose `generate_response(model, cfg, tokenizer, device, instruction, input_text)`, qui formate le prompt, génère la réponse (arrêt automatique sur `<|endoftext|>`) et renvoie uniquement le texte de la réponse.
 
 ---
 
@@ -162,7 +167,27 @@ Télécharge le dataset SMS Spam, entraîne pendant 5 epochs et sauvegarde `spam
 python train_instruct.py
 ```
 
-Télécharge le dataset d'instructions, entraîne pendant 20 epochs et sauvegarde `instruct_model.pth`.
+Télécharge le dataset d'instructions, entraîne pendant 3 epochs et sauvegarde `instruct_model.pth`.
+
+---
+
+### Générer une réponse avec le modèle instruction-tuned
+
+```python
+from infer_instruct import load_instruct_model, generate_response
+import tiktoken
+
+model, cfg = load_instruct_model()
+tokenizer  = tiktoken.get_encoding("gpt2")
+device     = next(model.parameters()).device
+
+response = generate_response(
+    model, cfg, tokenizer, device,
+    instruction="Rewrite the sentence using a simile.",
+    input_text="The car is very fast.",
+)
+print(response)
+```
 
 ---
 

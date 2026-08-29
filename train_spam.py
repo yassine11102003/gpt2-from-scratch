@@ -68,7 +68,7 @@ def build_loaders(df, tokenizer, batch_size=8):
     )
 
 
-def train(model_name="gpt2-medium (355M)", epochs=5, lr=1e-4, batch_size=8):
+def train(model_name="gpt2-small (355M)", epochs=10, lr=1e-5, batch_size=8):
     device    = "cuda" if torch.cuda.is_available() else "cpu"
     tokenizer = tiktoken.get_encoding("gpt2")
 

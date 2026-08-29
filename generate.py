@@ -3,7 +3,7 @@ import tiktoken
 
 
 def generate(model, idx, max_new_tokens, context_size,
-             temperature=None, top_k=None):
+             temperature=None, top_k=None, eos_id=None):
     """
     Generate tokens autoregressively.
 
@@ -16,6 +16,8 @@ def generate(model, idx, max_new_tokens, context_size,
                         None or 0 uses greedy decoding.
         top_k:          Keep only the top-k logits before sampling.
                         None disables top-k filtering.
+        eos_id:         Stop generation early if this token id is produced.
+                        None disables early stopping.
     """
     for _ in range(max_new_tokens):
         idx_context = idx[:, -context_size:]
@@ -34,6 +36,9 @@ def generate(model, idx, max_new_tokens, context_size,
             next_id = torch.multinomial(probs, num_samples=1)
         else:
             next_id = torch.argmax(logits, dim=-1, keepdim=True)
+
+        if eos_id is not None and next_id.item() == eos_id:
+            break
 
         idx = torch.cat((idx, next_id), dim=-1)
     return idx

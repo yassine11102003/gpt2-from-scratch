@@ -13,8 +13,7 @@ import tiktoken
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
 
-from config import GPT_BASE_CONFIG, GPT_MODEL_CONFIGS
-from model import GPTModel
+from load_gpt2 import load_gpt2
 from dataset import InstructionDataset, instruction_collate_fn
 
 
@@ -50,20 +49,11 @@ def build_loaders(data, tokenizer, device, batch_size=8):
     return train_loader, val_loader
 
 
-def train(model_name="gpt2-medium (355M)", epochs=20, lr=1e-4, batch_size=8):
+def train(model_name="gpt2-small (124M)", epochs=3, lr=1e-5, batch_size=8):
     device    = "cuda" if torch.cuda.is_available() else "cpu"
     tokenizer = tiktoken.get_encoding("gpt2")
 
-    cfg   = {**GPT_BASE_CONFIG, **GPT_MODEL_CONFIGS[model_name]}
-    model = GPTModel(cfg)
-
-    weights_file = f"{model_name.split()[0]}.pth"
-    if os.path.exists(weights_file):
-        model.load_state_dict(torch.load(weights_file, weights_only=True))
-    else:
-        print(f"Warning: {weights_file} not found. Using random weights.")
-
-    model.to(device)
+    model, cfg = load_gpt2(model_name, device=device)
 
     data = download_data()
     train_loader, val_loader = build_loaders(data, tokenizer, device, batch_size)
